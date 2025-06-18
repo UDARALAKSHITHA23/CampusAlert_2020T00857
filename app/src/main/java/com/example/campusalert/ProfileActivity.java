@@ -1,25 +1,18 @@
 package com.example.campusalert;
 
-//import static com.example.campusalert.R.id.tvLevel;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.example.campusalert.R;
+import com.google.firebase.database.*;
+
 public class ProfileActivity extends AppCompatActivity {
 
     private TextView profileName, profileEmail;
@@ -32,29 +25,24 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Initialize BottomNavigationView
-//        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-//        bottomNavigationView.setSelectedItemId(R.id.nav_profile);
-//        bottomNavigationView.setOnItemSelectedListener(item -> {
-//            switch (item.getItemId()) {
-//                case R.id.nav_home:
-//                    startActivity(new Intent(ProfileActivity.this, HomeActivity.class));
-//                    overridePendingTransition(0, 0);
-//                    return true;
-//                case R.id.nav_notifications:
-//                    startActivity(new Intent(ProfileActivity.this, NotificationActivity.class));
-//                    overridePendingTransition(0, 0);
-//                    return true;
-//                case R.id.nav_profile:
-//                    return true;
-//            }
-//            return false;
-//        });
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
 
         // Get username passed from previous activity
         username = getIntent().getStringExtra("username");
+        if (username == null || username.isEmpty()) {
+            Toast.makeText(this, "User session expired", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // Initialize UI components
+        initializeViews();
+        loadUserData();
+    }
+
+    private void initializeViews() {
         profileName = findViewById(R.id.profile_name);
         profileEmail = findViewById(R.id.profile_email);
         TextView tvLevel = findViewById(R.id.tvLevel);
@@ -77,51 +65,75 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         btnEdit.setOnClickListener(v -> {
-            if (username != null && !username.isEmpty()) {
-                Intent intent = new Intent(ProfileActivity.this, EditUserActivity.class);
+            Intent intent = new Intent(ProfileActivity.this, EditUserActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
+        });
+
+        btnDelete.setOnClickListener(v -> deleteUser());
+
+        // Initialize Bottom Navigation
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        setupBottomNavigation(bottomNavigationView);
+    }
+    private void setupBottomNavigation(BottomNavigationView bottomNavigation) {
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_home) {
+                // Already on profile, do nothing
+                return true;
+            } else {
+                String category = "";
+                String title = "";
+
+                if (itemId == R.id.nav_Sports) {
+                    category = "sports";
+                    title = "Sports News";
+                } else if (itemId == R.id.nav_academic) {
+                    category = "academic";
+                    title = "Academic News";
+                } else if (itemId == R.id.nav_events) {
+                    category = "events";
+                    title = "Campus Events";
+                }
+
+                Intent intent = new Intent(ProfileActivity.this, ActivityNews.class);
+                intent.putExtra("category", category);
+                intent.putExtra("title", title);
                 intent.putExtra("username", username);
                 startActivity(intent);
-            } else {
-                Toast.makeText(this, "Invalid user", Toast.LENGTH_SHORT).show();
+                overridePendingTransition(0, 0);
+                return true;
             }
         });
 
-        btnDelete.setOnClickListener(v -> {
-            if (username != null && !username.isEmpty()) {
-                DatabaseReference deleteRef = FirebaseDatabase.getInstance().getReference("users").child(username);
-                deleteRef.removeValue().addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(ProfileActivity.this, "User deleted", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(ProfileActivity.this, SignupActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(ProfileActivity.this, "Delete failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                Toast.makeText(ProfileActivity.this, "Invalid user", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Load user data
-        loadUserData();
+        // Set profile as selected by default
+        bottomNavigation.setSelectedItemId(R.id.nav_home);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadUserData();
+
+
+    private void deleteUser() {
+        DatabaseReference deleteRef = FirebaseDatabase.getInstance().getReference("users").child(username);
+        deleteRef.removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(ProfileActivity.this, "Account deleted", Toast.LENGTH_SHORT).show();
+                    redirectToLogin();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ProfileActivity.this, "Delete failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void redirectToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void loadUserData() {
-        if (username == null || username.isEmpty()) {
-            profileName.setText("No user");
-            profileEmail.setText("No user");
-            return;
-        }
-
         reference = FirebaseDatabase.getInstance().getReference("users").child(username);
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -132,16 +144,24 @@ public class ProfileActivity extends AppCompatActivity {
                     profileName.setText(name != null ? name : "No name");
                     profileEmail.setText(email != null ? email : "No email");
                 } else {
-                    profileName.setText("User not found");
-                    profileEmail.setText("User not found");
+                    Toast.makeText(ProfileActivity.this, "User data not found", Toast.LENGTH_SHORT).show();
+                    redirectToLogin();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                profileName.setText("Error");
-                profileEmail.setText("Error");
+                Toast.makeText(ProfileActivity.this, "Failed to load user data", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Reset navigation selection when returning
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
     }
 }

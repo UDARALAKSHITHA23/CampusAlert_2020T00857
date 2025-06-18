@@ -8,44 +8,43 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/logonew"
         android:label="@string/app_name"
-    android:roundIcon="@drawable/logonew"
-    android:supportsRtl="true"
-    android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-    tools:targetApi="31">
+        android:roundIcon="@drawable/logonew"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        tools:targetApi="31">
+        <activity
+            android:name=".NewsDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityNews"
+            android:exported="false" />
+        <activity
+            android:name=".DevInfro"
+            android:exported="true" />
+        <activity android:name=".EditUserActivity" />
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignupActivity"
+            android:exported="true" /> <!-- Launch activity with explicit theme -->
+        <activity
+            android:name=".wellcomePage"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-    <!-- All activities should inherit the application theme -->
-    <activity android:name=".DevInfro"
-        android:exported="true"/>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+    </application>
 
-    <activity android:name=".EditUserActivity" />
-
-    <activity
-        android:name=".ProfileActivity"
-        android:exported="false"/>
-
-    <activity
-        android:name=".SignupActivity"
-        android:exported="true"/>
-
-    <!-- Launch activity with explicit theme -->
-    <activity
-        android:name=".wellcomePage"
-        android:exported="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-
-    <activity
-        android:name=".LoginActivity"
-        android:exported="true"
-        android:label="@string/app_name"/>
-
-    <activity
-        android:name=".MainActivity"
-        android:exported="true" />
-</application>
-
-    </manifest>
+</manifest>
