@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "445428028633",
+    "firebase_url": "https://campusalerts-7e882-default-rtdb.firebaseio.com",
+    "project_id": "campusalerts-7e882",
+    "storage_bucket": "campusalerts-7e882.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445428028633:android:a1ddb08c20b9e6e21ddac8",
+        "android_client_info": {
+          "package_name": "com.example.campusalert"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcZpGn98Rr2oZjVBoX3kVNspOqgaJX3o8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:445428028633:android:e3073c555748313d1ddac8",
+        "android_client_info": {
+          "package_name": "com.example.campusalerts"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcZpGn98Rr2oZjVBoX3kVNspOqgaJX3o8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

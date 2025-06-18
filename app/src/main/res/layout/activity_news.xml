@@ -12,7 +12,7 @@
       android:id="@+id/newsScroll"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_above="@id/bottom_navigation"
+      android:layout_above="@id/bottomNavigationView"
       android:fillViewport="true">
 
     <LinearLayout
@@ -32,9 +32,9 @@
             android:id="@+id/btnBack"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@drawable/ic_back"
             android:layout_alignParentStart="true"
-            android:contentDescription="Back" />
+            android:contentDescription="Back"
+            android:src="@drawable/baseline_chevron_left_24" />
 
         <TextView
             android:id="@+id/tvHeader"
@@ -50,10 +50,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_profile_placeholder"
-            android:contentDescription="Profile Image"
             android:background="@drawable/circle_background"
-            android:padding="4dp" />
+            android:contentDescription="Profile Image"
+            android:padding="4dp"
+            android:src="@drawable/baseline_perm_identity_24" />
       </RelativeLayout>
       <!-- Dynamic News Cards -->
       <LinearLayout
@@ -71,7 +71,7 @@
 
   <!-- Bottom Navigation Bar -->
   <com.google.android.material.bottomnavigation.BottomNavigationView
-      android:id="@+id/bottom_navigation"
+      android:id="@+id/bottomNavigationView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_alignParentBottom="true"
